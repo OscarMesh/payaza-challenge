@@ -32,7 +32,7 @@ export async function POST(req: NextResponse, res: NextResponse) {
       maxBodyLength: Infinity,
       url: "https://router-live.78financials.com/api/request/secure/payloadhandler",
       headers: {
-        Authorization: `Payaza ${process.env.NEXT_PAYAZA_PK}`,
+        Authorization: `Payaza UFo3OC1QS0xJVkUtMEUzRUVCRjYtQjU4Qi00REQyLTlDNzgtOTlEMUU2MTk0NUY`,
         "Content-Type": "application/json",
       },
       data: data,
