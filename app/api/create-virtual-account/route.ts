@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 function generateRandomReference(length = 10) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -11,14 +11,17 @@ function generateRandomReference(length = 10) {
   return result;
 }
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
+    const body = await req.text();
+    const dataParsed = JSON.parse(body);
+
     const {
       customer_first_name,
       customer_last_name,
       customer_email,
       customer_phone,
-    } = await req.json();
+    } = dataParsed;
 
     if (
       !customer_first_name ||
@@ -28,12 +31,13 @@ export async function POST(req: NextResponse) {
     ) {
       return NextResponse.json(
         { error: "All fields are required" },
-        { status: 500 }
+        { status: 400 }
       );
     }
+
     const payment_reference = generateRandomReference();
 
-    let data = JSON.stringify({
+    const payload = JSON.stringify({
       service_type: "Account",
       service_payload: {
         request_application: "Payaza",
@@ -45,26 +49,27 @@ export async function POST(req: NextResponse) {
         customer_email,
         customer_phone,
         virtual_account_provider: "Premiumtrust",
-        payment_amount: 102,
+        payment_amount: 1429,
         payment_reference,
       },
     });
 
-    let config = {
+    const config = {
       method: "post",
       maxBodyLength: Infinity,
       url: "https://router-live.78financials.com/api/request/secure/payloadhandler",
       headers: {
-        Authorization: `Payaza ${process.env.NEXT_PAYAZA_PK!} `,
+        Authorization: `Payaza ${process.env.NEXT_PUBLIC_PAYAZA_PK!}`,
         "Content-Type": "application/json",
       },
-      data: data,
+      data: payload,
     };
 
     const response = await axios.request(config);
     return NextResponse.json(response.data);
   } catch (error) {
-    console.log(error);
+    console.log("Error occurred:", error);
+
     return NextResponse.json(
       { error: "Something went wrong..." },
       { status: 500 }

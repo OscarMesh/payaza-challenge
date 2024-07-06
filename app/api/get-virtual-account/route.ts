@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
       url: "https://api.payaza.africa/live/payaza-account/api/v1/mainaccounts/merchant/enquiry/main",
       headers: {
         "X-TenantID": "live",
-        Authorization: `Payaza ${process.env.NEXT_PAYAZA_PK!}`,
+        Authorization: `Payaza ${process.env.NEXT_PUBLIC_PAYAZA_PK!}`,
       },
     };
 
